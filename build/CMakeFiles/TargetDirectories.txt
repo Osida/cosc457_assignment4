@@ -1,0 +1,3 @@
+/home/osida/Downloads/cosc457_assignment4-main/Code/build/CMakeFiles/rebuild_cache.dir
+/home/osida/Downloads/cosc457_assignment4-main/Code/build/CMakeFiles/edit_cache.dir
+/home/osida/Downloads/cosc457_assignment4-main/Code/build/CMakeFiles/Rasterizer.dir
