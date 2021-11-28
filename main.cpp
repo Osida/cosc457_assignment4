@@ -7,6 +7,7 @@
 #include "Shader.hpp"
 #include "Texture.hpp"
 #include "OBJ_Loader.h"
+using namespace std;
 
 Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos)
 {

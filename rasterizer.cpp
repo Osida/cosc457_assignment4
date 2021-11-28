@@ -6,6 +6,7 @@
 #include "rasterizer.hpp"
 #include <opencv2/opencv.hpp>
 #include <math.h>
+using namespace std;
 
 rst::pos_buf_id rst::rasterizer::load_positions(const std::vector<Eigen::Vector3f> &positions)
 {
@@ -263,10 +264,6 @@ void rst::rasterizer::rasterize_triangle(const Triangle &t, const std::array<Eig
     //    * Z is interpolated view space depth for the current pixel
     //    * zp is depth between zNear and zFar, used for z-buffer
 
-    // float Z = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
-    // float zp = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
-    // zp *= Z;
-
     // TODO: Interpolate the attributes:
     // auto interpolated_color
     // auto interpolated_normal
@@ -277,6 +274,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle &t, const std::array<Eig
     // Use: payload.view_pos = interpolated_shadingcoords;
     // Use: Instead of passing the triangle's color directly to the frame buffer, pass the color to the shaders first to get the final color;
     // Use: auto pixel_color = fragment_shader(payload);
+
     auto v = t.toVector4();
     int left = MIN(v[0].x(), MIN(v[1].x(), v[2].x())) - 1;
     int right = MAX(v[0].x(), MAX(v[1].x(), v[2].x())) + 1;
@@ -293,6 +291,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle &t, const std::array<Eig
                 float Z = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
                 float zp = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
                 zp *= Z;
+
                 if (zp < depth_buf[get_index(x, y)])
                 {
                     depth_buf[get_index(x, y)] = zp;
@@ -300,7 +299,6 @@ void rst::rasterizer::rasterize_triangle(const Triangle &t, const std::array<Eig
                     auto interpolated_normal = Vector3f(alpha * t.normal[0] + beta * t.normal[1] + gamma * t.normal[2]).normalized();
                     auto interpolated_texcoords = Vector2f(alpha * t.tex_coords[0] + beta * t.tex_coords[1] + gamma * t.tex_coords[2]);
                     auto interpolated_shadingcoords = Vector3f(alpha * view_pos[0] + beta * view_pos[1] + gamma * view_pos[2]);
-
                     fragment_shader_payload payload(interpolated_color, interpolated_normal.normalized(), interpolated_texcoords, texture ? &*texture : nullptr);
                     payload.view_pos = interpolated_shadingcoords;
                     auto pixel_color = fragment_shader(payload);
